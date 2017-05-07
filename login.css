@@ -1,0 +1,189 @@
+/*login.php, register.php, logout.phpのCSS*/
+/* html,bodyタグの設定 */
+html, body {
+  margin: 0;
+  padding: 0;
+  width:100%;
+  /*width: 1366px;*/
+  height:100%;
+}
+/* ヘッダーの固定 */
+header.header-fixed {
+  position: fixed;            /* ヘッダーの固定 */
+  top: 0px;                   /* 位置(上0px) */
+  left: 0px;                  /* 位置(右0px) */
+  width: 100%;                /* 横幅100%　*/
+  height: 120px;               /* 縦幅140pxから変更縦幅120px */
+  background-color: #ffffff;
+  border-bottom: 1px solid #cccccc;
+}
+div#header-bk {
+	/*background-color:#444;*/     /* 背景色(黒) */
+	padding:10px 0 20px;       /* 上10px、下20pxをあける */
+	height: 90px;          /* 縦の高さ110px */
+	width:100%;                /* 横の幅を100% */
+}
+div#header {
+	/*border: 5px solid #fff; */   /* 表示領域を白枠で囲う */
+	height: 100%;              /* 縦の表示領域はheader-bkと同じ */
+	width: 960px;              /* 横の幅970px */
+	margin: auto;              /* 中央揃え */
+  /*display: flex;*/
+}
+.header-top {
+  /*height: 40px;*/
+  display: flex;
+  /*height: 90px;*/
+}
+.logo-header {
+  width: 300px;
+  flex: 5;
+}
+.logo-header-img {
+  width: 300px;
+}
+.dummy-header {
+  flex: 1
+}
+.search-header {
+  flex: 5;
+  text-align: right;
+}
+.search-header a {
+  color: #8B4513; /*saddlebrown*/
+}
+.header-right a {
+  font-size: 12px;
+}
+.icon-header {
+  padding-top: 5px;
+  height: 30px;
+}
+.icon-cart {
+  height: 15px;
+}
+/*ヘッダーリスト*/
+/*.header_list {
+  height: 20px;
+}*/
+header ul {
+  list-style-type: none;
+  display: flex;
+}
+header li {
+  flex: 1;
+  text-align: center;
+  padding: 5px;
+  border-right: 1px solid #cccccc;
+}
+header li:last-child {
+  border-right: none;
+}
+header div ul li a {
+  background-color: #8B4513; /*saddlebrown*/
+  color: #ffffff;
+  /*color: #D2691E; */ /*chocolate*/
+  display: block;
+  text-decoration: none;
+  border-radius: 10px;
+}
+header div ul li a:hover {
+  /*color: #F08080;*/ /*lightcoral*/
+  color: #cccccc; /*lightcoral*/
+  display: block;
+  text-decoration: none;
+}
+
+/* ボディの定義 */
+main#body-bk{
+    /*padding:160px 0 160px 0; */   /* 上下に160pxを余白を取る */
+    padding:160px 0 40px 0;       /* 上に160px、下に40pxを余白を取る */
+    background-color: #FFFAF0;    /*floralwhite*/
+}
+.main-picture {
+  width: 960px;
+  /*width: 100%;*/
+  height: 400px;
+  /*display: container;*/
+}
+.box {
+  width: 960px;
+  margin: 0 auto;
+}
+.box-login, .box-register {
+  margin: 0 auto;
+  position: relative;
+}
+.login, .account-register {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translateY(-50%) translateX(-50%);
+  transform: translateY(-20%) translateX(-50%);
+}
+.login input, .account-register input {
+  margin-bottom: 5px;
+}
+a {
+  color: #8B4513; /*saddlebrown*/
+}
+a:hover {
+  color: #8B4513; /*saddlebrown*/
+}
+p {
+  /*color: #FF8C00;  *?/*ダークオレンジ*/
+  color: #8B4513; /*saddlebrown*/
+}
+/* フッターの固定・定義 */
+footer#footer-fixed {
+  background-color: #ffffff;
+  border-top: 1px solid #cccccc;
+  /* フッターの固定は、top.php, 以外行う*/
+  position: fixed;            /* フッターの固定 */
+  bottom: 0px;                /* 位置(下0px) */
+  left: 0px;                  /* 位置(左0px) */
+  width: 100%;                /* 横幅100%　*/
+  height: 40px;              /* 縦幅140px */
+}
+div#footer-bk {
+	padding: 10px 0 20px;       /* 上10px、下20pxをあける */
+	height: 30px;              /* 縦の高さ140px */
+	width: 100%;                /* 横の幅を100% */
+}
+footer div.box {
+	height: 100%;              /* 縦の表示領域はheader-bkと同じ */
+	width: 960px;              /* 横の幅970px */
+	margin: auto;              /* 中央揃え */
+}
+footer div div ul {
+  list-style-type: none;
+  display: flex;
+  width: 564px;
+  margin: 10px auto;
+}
+footer div div li {
+  flex: 1;
+  text-align: center;
+  padding: 5px;
+  border-right: 1px solid #cccccc;
+}
+footer div div li:last-child {
+  border-right: none;
+}
+footer div div ul li a {
+  color: #8B4513; /*saddlebrown*/
+  display: block;
+  text-decoration: none;
+  font-size: 12px;
+}
+footer div div ul li a:hover {
+  color: #8B4513; /*saddlebrown*/
+  display: block;
+  font-size: 12px;
+}
+small {
+  color: #cccccc;
+  display: block;
+  font-size: 12px;
+  text-align: center;
+}
