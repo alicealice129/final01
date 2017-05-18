@@ -1,13 +1,10 @@
 <?php
-// 設定ファイル読み込み
+//設定ファイル読み込み
 require_once './conf/setting.php';
-// 関数ファイル読み込み
+//関数ファイル読み込み
 require_once './model/model.php';
 
 session_start();
-
-// adminユーザのみログインできるようにする
-// その実装が終わってから、表示させる
 // ログインしていないなら、ログイン画面へ
 if(login_check() === false) {
   header('Location: ./login.php');
@@ -35,11 +32,29 @@ if (isset($user_data[0]['user_name'])) {
   $login_user = 'ゲスト';
 }
 
+// 商品情報関連
+$request_method = get_request_method();
+$msg = [];
 $err_msg = [];
-$link = get_db_connect();
-$data = get_all_user_data($link);
+$create_datetime = date('Y-m-d H:i:s');  //作成日時を取得
+$update_datetime = date('Y-m-d H:i:s');  //更新日時を取得
+$item_list = [];
+$img_dir = './image/';
+$sql_kind = get_post_data('sql_kind');
 
-// ユーザー情報一覧テンプレート読み込み
-include_once './view/userinfo_view.php';
+// ステータスが公開の商品一覧を取得
+// 商品一覧を取得
+$link = get_db_connect();
+// $item_list = get_public_item_list($link);
+try {
+  $link = get_db_connect();
+  $my_purchase_data = get_my_purchase_data($link, $user_id);
+} catch(PDOException $e){
+  $err_msg = $e->getMessage();
+}
+
+
+// カテゴリ検索テンプレート読み込み
+include_once './view/mypage_view.php';
 
 ?>

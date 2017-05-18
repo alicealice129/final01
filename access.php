@@ -1,19 +1,10 @@
 <?php
-// 設定ファイル読み込み
+//設定ファイル読み込み
 require_once './conf/setting.php';
-// 関数ファイル読み込み
+//関数ファイル読み込み
 require_once './model/model.php';
 
 session_start();
-
-// adminユーザのみログインできるようにする
-// その実装が終わってから、表示させる
-// ログインしていないなら、ログイン画面へ
-if(login_check() === false) {
-  header('Location: ./login.php');
-  exit;
-}
-
 $user_id = '';
 // ユーザ情報（user_idなど)の取得
 if (isset($_SESSION['user_id']) === TRUE) {
@@ -35,11 +26,19 @@ if (isset($user_data[0]['user_name'])) {
   $login_user = 'ゲスト';
 }
 
+// 商品情報関連
+$request_method = get_request_method();
+$msg = [];
 $err_msg = [];
-$link = get_db_connect();
-$data = get_all_user_data($link);
+$create_datetime = date('Y-m-d H:i:s');  //作成日時を取得
+$update_datetime = date('Y-m-d H:i:s');  //更新日時を取得
+$item_list = [];
 
-// ユーザー情報一覧テンプレート読み込み
-include_once './view/userinfo_view.php';
+$sql_kind = get_post_data('sql_kind');
+
+
+
+// カテゴリ検索テンプレート読み込み
+include_once './view/access_view.php';
 
 ?>

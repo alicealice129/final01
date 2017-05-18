@@ -10,19 +10,22 @@ html, body {
 }
 /* ヘッダーの固定 */
 header.header-fixed {
-  position: fixed;            /* ヘッダーの固定 */
+  position: fixed;            /* ヘッダーの固定
   top: 0px;                   /* 位置(上0px) */
   left: 0px;                  /* 位置(右0px) */
   width: 100%;                /* 横幅100%　*/
   height: 120px;              /* 縦幅140pxから120pxに変更 */
   background-color: #ffffff;
   border-bottom: 1px solid #cccccc;
+  z-index: 2;
 }
 div#header-bk {
 	/*background-color:#444;*/     /* 背景色(黒) */
-	padding:10px 0 20px;       /* 上10px、下20pxをあける */
+	padding: 15px 0 0px;       /* 上10px、下20pxをあける */
 	height: 90px          /* 縦の高さ110px */
 	width:100%;                /* 横の幅を100% */
+  background-color: #ffffff;
+  border-bottom: 1px solid #cccccc;
 }
 div#header {
 	/*border: 5px solid #fff; */   /* 表示領域を白枠で囲う */
@@ -61,6 +64,16 @@ div#header {
 }
 .icon-cart {
   height: 15px;
+}
+/*tool.php, userinfo.php, resulutinfo.php用*/
+h3.admin {
+  margin-top: 0px;
+  padding-left: 20px;
+  background-color: #8B4513; /*saddlebrown*/
+  color: #ffffff;
+  display: block;
+  text-decoration: none;
+  border-radius: 10px;
 }
 /*ヘッダーリスト*/
 .header-list {
@@ -102,23 +115,34 @@ header div ul li a:active {
 }
 /* ボディの定義 */
 main#body-bk{
+    width: 1366px;
     /*padding:160px 0 160px 0; */   /* 上下に160pxを余白を取る */
-    padding:160px 0 40px 0;         /* 上に160px、下に40pxを余白を取る */
+    padding:160px 0 40px 0;         /* 上に160px、下に40pxを余白を取る
+    /*padding: 90px 0 40px 0;         /* 上に160px、下に40pxを余白を取る */
     background-color: #FFFAF0;      /*floralwhite*/
+    z-index: 1;
 }
 .main-picture {
   width: 960px;
   /*width: 100%;*/
-  height: 400px;
+  height: 300px;
   /*display: container;*/
   margin-bottom: 10px;
+}
+/*.picture {
+  width: 960px;
+  margin: 0 auto;
+  height: 200px;
+  margin-bottom: 10px;
+}*/
+.img-responsive, .thumbnail>img, .thumbnail a>img, .carousel-inner>.item>img, .carousel-inner>.item>a>img {
+    display: block;
+    max-width: 100%;
+    height: 350px;
 }
 .box {
   width: 960px;
   margin: 0 auto;
-}
-.box-category, .box-result {
-  height: 300px;
 }
 .form-control {
   width: 200px;
@@ -126,24 +150,51 @@ main#body-bk{
 .category input {
   margin-bottom: 5px;
 }
-p {
-  /*color: #FF8C00;  */ /*ダークオレンジ*/
-  color: #8B4513; /*saddlebrown*/
-}
-a {
-  color: #8B4513; /*saddlebrown*/
-}
 .middle {
   display: flex;
 }
 nav {
   flex: 1;
+  /*padding-right: 2px;*/
 }
 article {
-  flex: 4;
+  flex: 14;
 }
 aside {
-  flex: 1;
+  flex: 2;
+}
+#datepicker {
+  text-align: center;
+  /*width: 120px;
+  height: 90px;*/
+}
+#coupon {
+  height: 150px;
+}
+#coupon-btn {
+  margin: 30px auto 0;
+  width: 100px;
+  height: 100px;
+  border-radius: 40%;
+  /*background-color: #EF454A;*/
+  background-color: #FF7F50;
+  text-align: center;
+  line-height: 100px;
+  color: #FFFFFF;
+  font-size: 10px;
+  cursor: pointer;
+  opacity: 0.9;
+  box-shadow: 0 10px 0 #FFA07A;
+  border: 3px solid #FFA07A;
+  user-select: none;
+}
+#coupon-btn:hover {
+  opacity: 1;
+}
+#coupon-btn.pushed {
+  margin-top: 36px;
+  box-shadow: 0 4px 0 #FFA07A;
+  /*box-shadow: 0 4px 0 #D1483E;*/
 }
 .text-align-center {
   text-align: center;
@@ -151,13 +202,124 @@ aside {
 .item-list {
   display: flex;
   flex-wrap:wrap;
+  color: #8B4513;
+  margin-right: 10px;
+}
+/*.nav-cupcake {
+  font-size: 16px;
+  color: #8B4513;
+}
+.nav-each-cupcake {
+  list-style-type: none;
+}*/
+.cupcake-image {
+  margin-left: 5px;
+  margin-right: 5px;
 }
 .cupcake-image-size {
   width: 150px;
   height: 150px;
 }
+figcaption {
+  font-size: 10px;
+  font-weight: bold;
+  color: #8B4513;
+}
+.icon-list {
+  /*padding-top: 5px;*/
+  height: 18px;
+}
+.box-login, .box-register, .box-contact, .box-mypage {
+  margin: 0 auto;
+  /*position: relative;*/
+}
+.login, .account-register {
+  text-align: center;
+  border: solid 1px #8B4513;
+  border-radius: 20px;
+  margin-left: 200px;
+  margin-right: 200px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+.login input, .account-register input, {
+  margin-bottom: 5px;
+}
+.contact {
+  border: solid 1px #8B4513;
+  border-radius: 20px;
+  margin-left: 100px;
+  margin-right: 100px;
+  padding: 30px;
+}
+a {
+  color: #8B4513; /*saddlebrown*/
+}
+a:hover {
+  color: #8B4513; /*saddlebrown*/
+}
+p {
+  color: #8B4513; /*saddlebrown*/
+}
+h3 {
+  color: #8B4513;
+  text-decoration: underline;
+  font-weight: bold;
+}
+.err_msg {
+  background-color: #8B4513;
+  color: #ffff00;
+  margin-top: 5px;
+  border-radius: 10px;
+}
+section {
+  margin-top: 10px;
+}
+.cart-button {
+  margin-top: 10px;
+}
+/*tool.phpのbody用*/
+h5 {
+  font-weight: bold;
+}
+.tool-section {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-top: solid 1px;
+}
+table {
+  background-color: #ffffff;
+  /*border: solid 1px #000000;*/
+  /*width: 660px;
+  border-collapse: collapse;*/
+}
+/*table, tr, th, td {
+  border: solid 1px;
+  padding: 10px;
+  text-align: center;
+}
+caption {
+  text-align: left;
+}
+.text-align-right {
+  text-align: right;
+}
+.item-name-width {
+  width: 100px;
+}
+.input-text-width {
+  width: 60px;
+}
+.status_false {
+  background-color: #A9A9A9;
+}*/
+#map {
+  width: 100%;
+  height: 400px;
+  background-color: grey;
+}
 /* フッターの固定・定義 */
-footer#footer-fixed {
+#footer-fixed {
   background-color: #ffffff;
   border-top: 1px solid #cccccc;
   /* フッターの固定は、top.php行うか考え中*/
@@ -168,7 +330,7 @@ footer#footer-fixed {
   width: 100%;                /* 横幅100%　*/
   height: 40px;              /* 縦幅140px */
 }
-div#footer-bk {
+#footer-bk {
 	padding: 10px 0 20px;       /* 上10px、下20pxをあける */
 	height: 30px;              /* 縦の高さ140px */
 	width: 100%;                /* 横の幅を100% */

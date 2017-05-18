@@ -1,94 +1,101 @@
-<!DOCTYPE html>
-<html lang="ja">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>EatFruitCupcake</title>
-		<link rel="shortcut icon" href="img/icon/cupcakeicon10.ico">
-		<link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="./index.css">
-		<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-		<![endif]-->
-	</head>
-	<body>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-		<script src="js/bootstrap.min.js"></script>
+<?php
+//設定ファイル読み込み
+require_once './conf/setting.php';
+//関数ファイル読み込み
+require_once './model/model.php';
 
-    <header class="header-fixed">
-	  	<div id="header-bk">
-		    <div id="header">
-					<div class="header-top">
-						<div class="logo-header">
-							<a href="./index.php">
-								<img class="icon-header" src="img/icon/cupcakeicon1.jpeg">
-								<img class="logo-header-img" src="img/cupcakelogo.png">
-							</a>
-							<p>フルーツカップケーキ専門店</p>
-						</div>
-						<div class="dummy-header"></div>
-						<div class="search-header">
-							<p>ようこそ<?php //print h($user_name); ?>プリントphp</a>さん。<a href="./index.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></p>
-							<div class="btn-group header-right" role="group">
-									<a href="./favor.php" class="btn btn-default" role="button"><span class="glyphicon glyphicon-star" aria-hidden="true"></span>お気に入り</a>
-									<a href="./cart.php" class="btn btn-default" role="button"><img class="icon-cart" src="img/icon/iconmonstr-shopping-cart_brown-28-240.png">カート</a>
-									<a href="./mypage.php" class="btn btn-default" role="button">マイページ</a>
-<?php //if(ログアウトしてたらまたはログインしていなかったら) { ?>
-									<a href="./login.php" class="btn btn-default" role="button">ログイン</a>
-<?php //} else if (ログインしたら) { ?>
-									<a href="./logout.php" class="btn btn-default" role="button">ログアウト</a>
-<?php //} ?>
-							</div>
-						</div>
-					</div><!-- header-top終わり -->
-					<div class="header-list">
-		        <ul>
-		          <li><a href="./index.php" class="logo-color">ホーム</a></li>
-		          <li><a href="./category.php" class="logo-color">カテゴリ検索</a></li>
-							<li><a href="./access.php" class="logo-color">アクセス</a></li>
-							<li><a href="./contact.php" class="logo-color">お問い合わせ</a></li>
-		        </ul>
-		      </div>
-					<!-- header-list終わり -->
-				</div>
-	   	</div>
-    </header>
-    <main id="body-bk">
-      <!-- <div id="body"> -->
-			<div class="box middle box-result">
-				<nav>
-	        <section>
+session_start();//未ログインならloginへ。
+if(login_check() === false){
+  header('Location: ./login.php');
+  exit;
+};
+//POSTでなければログイン画面へ。
+// if(get_request_method() !== 'POST'){
+//   header('Location: ./login.php');
+//   exit;
+// }
+$user_id = '';
+if (isset($_SESSION['user_id']) === TRUE) {
+  // ログイン済みの場合
+  $user_id = $_SESSION['user_id'];
+  //データベースに接続して、ログインユーザの情報を得る
+  $link = get_db_connect();
+  try {
+  	$user_data= get_login_user_data($link, $user_id);
+    $login_user = $user_data[0]['user_name'];
+  } catch (PDOException $e) {
+  	$err_msg[] = $e-> getMessage();
+  	// throw $e; throwすると終了してしまう
+  }
+}
+$err_msg = []; //エラーメッセージ
+$user_id = get_user_id();
+$msg = [];
+$img_dir = './image/';
+$create_datetime = date('Y-m-d H:i:s');
+$update_datetime = date('Y-m-d H:i:s');
 
-	        </section>
-					<section>
+//商品一覧を取得
+try {
+  $dbh = get_db_connect();
+  $cart_list = get_cart_list($dbh);
+  //トランザクション開始
+  $dbh->beginTransaction();
+  try {
+    // 各商品の購入処理
+    foreach($cart_list as $item) {
+      if ($item['item_stock'] - $item['amount'] < 0) {
+        throw new Exception($item['item_name']. 'の在庫が足りません。');
+      }
+      // 商品在庫の更新
+      $new_stock = $item['item_stock'] - $item['amount'];
+      $params = array(
+        'item_id' => $item['item_id'],
+        'stock' => $item['item_stock'] - $item['amount'],
+        'update_datetime' => $update_datetime
+      );
+      // update_item_stock($dbh, $param);
+      update_item_stock($dbh, $params['stock'], $params['update_datetime'], $item['item_id']);
+      // $msg = '在庫数を変更しました';
 
-					</section>
-				</nav>
-				<article>
-					<p>お買い上げありがとうございました。</p>
-					<p>またのご来店をお待ちしております。</p>
+      //購入履歴のinsert
+      $params = array(
+        'user_id' => get_user_id(),
+        'item_id' => $item['item_id'],
+        'amount'  => $item['amount'],
+        'item_price' => $item['item_price'],
+        'create_datetime' => $create_datetime,
+        'update_datetime' => $update_datetime
+      );
+      insert_history($dbh, $params);
 
-					<a href="index.php"><span class="glyphicon glyphicon-home" aria-hidden="true">トップページへ戻る</a>
-				</article>
-				<aside>
+      //購入商品をセッションに保存
+      // set_flush('cart_list', $cart_list);
+    }
+    //購入処理が全て完了したらカート内容を削除 (foreachが終わった後)
+    delete_cart($dbh);
+    //コミット
+    $dbh->commit();
+      // commitされたら必ず実行される
+    // if ($result1 === true && $result2 === true) {
+    $msg = '商品の購入が完了しました。';
+    // }
+   } catch(Exception $e){
+    //ロールバック
+    $dbh->rollback();
+    //例外をスロー
+    throw $e;
+  }
+} catch(Exception $e) {
+  $err_msg[] = $e->getMessage();
+  // var_dump($err_msg);
+  // set_flush_err_msg();
+  // header('Location: ./cart.php');
+  exit;
+}
+$total_price = get_total_price($cart_list);
 
-	      </aside>
-			</div>
-    </main>
-    <footer id="footer-fixed">
-			<div id="footer-bk">
-				<div class="box">
-					<ul>
-						<li><a href="./site.php">サイトマップ</a></li>
-						<li><a href="./policy.php">プライバシーポリシー</a></li>
-						<li><a href="./contact.php">お問い合わせ</a></li>
-						<li><a href="./help.php">ご利用ガイド</a></li>
-					</ul>
-					<p><small>Copyright&copy;EatFruitCupcake All Rights Reserved.</small></p>
-				</div>
-			</div>
-		</footer>
-	</body>
-</html>
+//購入結果ページテンプレート読み込み
+include_once './view/result_view.php';
+
+?>

@@ -1,120 +1,188 @@
-<!DOCTYPE html>
-<html lang="ja">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>EatFruitCupcake</title>
-		<link rel="shortcut icon" href="img/icon/cupcakeicon10.ico">
-		<link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="./tool.css">
-		<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-		<![endif]-->
-	</head>
-	<body>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-		<script src="js/bootstrap.min.js"></script>
+<?php
+// 設定ファイル読み込み
+require_once './conf/setting.php';
+// 関数ファイル読み込み
+require_once './model/model.php';
 
-    <header class="header-fixed">
-	  	<div id="header-bk">
-		    <div id="header">
-					<div class="header-top">
-						<div class="logo-header">
-							<a href="./index.php">
-								<img class="icon-header" src="img/icon/cupcakeicon1.jpeg">
-								<img class="logo-header-img" src="img/cupcakelogo.png">
-							</a>
-							<p>フルーツカップケーキ専門店</p>
-							<h3>商品管理ページ</h3>
-						</div>
-						<div class="dummy-header"></div>
-						<div class="search-header">
-							<p><a href="./userinfo.php"><span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>ユーザ管理ページ</a></p>
-							<p><a href="./resultinfo.php"><span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>ユーザの購入履歴一覧ページ</a></p>
-						</div>
-					</div><!-- header-top終わり -->
-				</div>
-	   	</div>
-    </header>
-    <main id="body-bk">
-			<div class="box">
-				<p>このページは、商品管理者専用のページです。</p>
-				<h4>商品販売管理ツール</h4>
-				<section class="tool-section">
-					<h5>新規商品追加</h5>
-					<form method="post" enctype="multipart/form-data">
-						<div><label>名前: <input type="text" name="item_name" value=""></label></div>
-						<div><label>値段: <input type="text" name="item_price" value=""></label></div>
-						<div><label>個数: <input type="text" name="item_stock" value=""></label></div>
-						<div><input type="file" name="item_img"></div>
-						<div>
-			        <select name="new_status">
-			          <option value="0">非公開</option>
-			          <option value="1">公開</option>
-			        </select>
-			      </div>
-						<input type="hidden" name="process_kind" value="insert_item">
-						<div><input type="submit" class="btn btn-default" value="■■■商品追加■■■"></div>
-					</form>
-				</section>
-				<section class="tool-section">
-					<h5>商品情報変更</h5>
-					<table>
-						<caption>商品一覧</caption>
-						<tr>
-							<th>商品ID</th>
-							<th>商品画像</th>
-							<th>商品名</th>
-							<th>価格</th>
-							<th>在庫数</th>
-							<th>ステータス</th>
-						</tr>
-<?php //foreach ($data as $value) { ?>
-<?php //if($value['status'] === '1') {	?>
-						<!-- <tr> -->
-<?php //} else {?>
-						<tr class="status-false">
-<?php //} ?>
-							<form method="post">
-								<td><?php //print $value['item_id']; ?></td>
-								<td><img src="<?php //print $img_dir. $value['item_img']; ?>"></td>
-								<td class="item-name-width"><?php //print $value['item_price']; ?></td>
-								<td class="text-align-right"><?php //print $value['item_price']; ?>円</td>
-								<td><input type="text" class="input-text-width text-align-right" name="update_stock" value="<?php //print $value['item_stock']; ?>">個&nbsp;&nbsp;<input type="submit"  class="btn btn-default" value="変更"></td>
-								<input type="hidden" name="item_id" value="<?php print $value['item_id']; ?>">
-								<input type="hidden" name="sql_kind" value="update">
-							</form>
-							<form method="post">
-<?php //if ($value['status'] === '1') { ?>
-								<td><input type="submit" class="btn btn-default"  value="公開 → 非公開"></td>
-								<input type="hidden" name="change_status" value="0">
-<?php //} else { ?>
-								<!-- <td><input type="submit"  class="btn btn-default" value="非公開 → 公開"></td>
-								<input type="hidden" name="change_status" value="1"> -->
-<?php //} ?>
-								<input type="hidden" name="item_id" value="<?php print $value['item_id']; ?>">
-								<input type="hidden" name="sql_kind" value="change">
-							</form>
-						</tr>
-<?php //} ?>
-					</table>
-				</section>
-			</div>
-    </main>
-    <footer id="footer-fixed">
-			<div id="footer-bk">
-				<div class="box">
-					<ul>
-						<li><a href="./site.php">サイトマップ</a></li>
-						<li><a href="./policy.php">プライバシーポリシー</a></li>
-						<li><a href="./contact.php">お問い合わせ</a></li>
-						<li><a href="./help.php">ご利用ガイド</a></li>
-					</ul>
-					<p><small>Copyright&copy;EatFruitCupcake All Rights Reserved.</small></p>
-				</div>
-			</div>
-		</footer>
-	</body>
-</html>
+session_start();
+
+// adminユーザのみログインできるようにする
+// その実装が終わってから、表示させる
+// ログインしていないなら、ログイン画面へ
+if(login_check() === false) {
+  header('Location: ./login.php');
+  exit;
+}
+
+$user_id = '';
+// ユーザ情報（user_idなど)の取得
+if (isset($_SESSION['user_id']) === TRUE) {
+  // ログイン済みの場合
+  $user_id = $_SESSION['user_id'];
+  //データベースに接続して、ログインユーザの情報を得る
+  $link = get_db_connect();
+  try {
+  	$user_data= get_login_user_data($link, $user_id);
+  } catch (PDOException $e) {
+  	$err_msg[] = $e-> getMessage();
+  }
+}
+// ユーザ名の取得の確認
+$login_user = '';
+if (isset($user_data[0]['user_name'])) {
+  $login_user = $user_data[0]['user_name'];
+} else {
+  $login_user = 'ゲスト';
+}
+
+$request_method = get_request_method();
+$msg = [];                    // 正常のメッセージ
+$err_msg = [];                // エラーメッセージ
+$create_datetime = date('Y-m-d H:i:s');  //作成日時を取得
+$update_datetime = date('Y-m-d H:i:s');  //更新日時を取得
+$img_dir = './image/';
+$item_list = [];
+$new_img_filename = '';   // アップロードした新しい画像ファイル名
+$item_img = '';   // アップロードした新しい画像ファイル名
+
+$sql_kind = get_post_data('sql_kind');
+$change_status = get_post_data('change_status');
+// 商品登録ボタンが押された場合の処理
+if ($sql_kind === 'insert_item' && $request_method === 'POST' ){
+	// 商品名が正しく入力されているかチェック
+	$item_name = get_post_data('item_name');
+	$result = check_item_name($item_name);
+	if ($result !== true) {
+	  $err_msg[] = $result;
+	}
+  // 値段が正しく入力されているかチェック
+	$item_price = get_post_data('item_price');
+	$result = check_item_price($item_price);
+	if ($result !== true) {
+	  $err_msg[] = $result;
+	}
+  // 在庫数が正しく入力されているかチェック
+	$item_stock = get_post_data('item_stock');
+	$result = check_item_stock($item_stock, '在庫');
+	if ($result !== true) {
+	  $err_msg[] = $result;
+	}
+	//商品カテゴリが正しく入力されているかチェック
+  $category_name = get_post_data('category_name');
+  $result = check_category($category_name);
+  if ($result !== true) {
+    $err_msg[] = $result;
+  }
+  // 商品画像が正しく選択されているかチェック
+  // $item_img = get_post_data('item_img');
+  // $result = check_item_img($item_img);
+  // $result = check_item_img('item_img');
+  // if ($result !== $new_img_filename) {
+  //   $err_msg[] = $result;
+  // } else if {
+  //   $item_img = $new_img_filename;
+  // }
+  // HTTP POST でファイルがアップロードされたかどうかチェック
+  if (is_uploaded_file($_FILES['item_img']['tmp_name']) === TRUE) {
+    // 画像の拡張子を取得
+    $extension = pathinfo($_FILES['item_img']['name'], PATHINFO_EXTENSION);
+    // 指定の拡張子であるかどうかチェック
+    if ($extension === 'png' || $extension === 'jpg' || $extension === 'jpeg') {
+      // 保存する新しいファイル名の生成（ユニークな値を設定する）
+      $item_img = sha1(uniqid(mt_rand(), true)). '.' . $extension;
+      // 同名ファイルが存在するかどうかチェック
+      if (is_file($img_dir . $item_img) !== TRUE) {
+        // アップロードされたファイルを指定ディレクトリに移動して保存
+        if (move_uploaded_file($_FILES['item_img']['tmp_name'], $img_dir . $item_img) !== TRUE) {
+            $err_msg[] = 'ファイルアップロードに失敗しました';
+          }
+        } else {
+        $err_msg[] = 'ファイルアップロードに失敗しました。再度お試しください。';
+      }
+    } else {
+      $err_msg[] = 'ファイル形式が異なります。画像ファイルはJPEG又はPNGのみ利用可能です。';
+    }
+  } else {
+    $err_msg[] = 'ファイルを選択してください';
+  }
+  //ステータスが正しく入力されているかチェック
+  $status = get_post_data('status');
+  $result = check_status($status);
+  if ($result != true) {
+    $err_msg[] = $result;
+  }
+  // これから登録する商品をitem_masterに挿入
+  if(count($err_msg) === 0) {
+		try {
+    $link = get_db_connect();
+		insert_item_data($link, $item_name, $item_price, $item_stock, $item_img, $status, $category_name, $create_datetime, $update_datetime);
+  	$msg[] = '新規商品の登録が完了しました!!';
+		} catch(PDOException $e) {
+	    $err_msg[] = $e->getMessage();
+		}
+	}
+}
+
+// 在庫数更新ボタンが押された場合の処理
+if ($sql_kind === 'update_stock' && $request_method === 'POST'){
+  // 在庫数が正しく入力されているかチェック
+	$item_stock = get_post_data('item_stock');
+	$result = check_item_stock($item_stock, '在庫');
+	if ($result !== true) {
+	  $err_msg[] = $result;
+  }
+  // 商品IDが正しくPOSTされているかチェック
+  $item_id = get_post_data('item_id');
+  if(count($err_msg) === 0) {
+		try {
+	    $link = get_db_connect();
+			update_item_stock($link, $item_stock, $update_datetime, $item_id);
+			$msg[] = '在庫数を変更しました!!';
+		} catch (PDOException $e) {
+	    $err_msg = $e->getMessage();
+	  }
+  }
+}
+// ステータスボタン(公開→非公開(0)または非公開→公開(1))が押された場合
+if ($sql_kind === 'change_item_status' && $request_method === 'POST') {
+  // 商品IDが正しくPOSTされているかチェック
+  $item_id = get_post_data('item_id');
+  //ステータスが正しく入力されているかチェック
+  $status = get_post_data('change_status');
+  $result = check_status($status);
+  if ($result != true) {
+    $err_msg[] = $result;
+  }
+
+  if(count($err_msg) === 0) {
+		try {
+	    $link = get_db_connect();
+	    change_item_status($link, $status, $update_datetime, $item_id);
+			$msg[] = 'ステータスを変更しました!!';
+	  } catch (PDOException $e) {
+	    $err_msg[] = $e->getMessage();
+	  }
+	}
+}
+// 「この商品を削除」ボタンが押された場合の処理
+if ($sql_kind === 'delete_item' && $request_method === 'POST'){
+	// 商品IDが正しくPOSTされているかチェック
+  $item_id = get_post_data('item_id');
+	if(count($err_msg) === 0){
+		try {
+			$link = get_db_connect();
+			delete_item($link, $item_id);
+			$msg[] = 'この商品を削除しました';
+		} catch (PDOException $e) {
+	    $err_msg[] = $e->getMessage();
+	  }
+	}
+}
+// 商品一覧を取得
+$link = get_db_connect();
+$item_list = get_all_item_list($link);
+// var_dump($item_list);
+
+// 商品管理ページテンプレート読み込み
+include_once './view/tool_view.php';
+?>

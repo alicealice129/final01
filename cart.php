@@ -1,92 +1,98 @@
-<!DOCTYPE html>
-<html lang="ja">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>EatFruitCupcake</title>
-		<link rel="shortcut icon" href="img/icon/cupcakeicon10.ico">
-		<link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="./index.css">
-		<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-		<![endif]-->
-	</head>
-	<body>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-		<script src="js/bootstrap.min.js"></script>
+<?php
+require_once './conf/setting.php';
+require_once './model/model.php';
 
-    <header class="header-fixed">
-	  	<div id="header-bk">
-		    <div id="header">
-					<div class="header-top">
-						<div class="logo-header">
-							<a href="./index.php">
-								<img class="icon-header" src="img/icon/cupcakeicon1.jpeg">
-								<img class="logo-header-img" src="img/cupcakelogo.png">
-							</a>
-							<p>フルーツカップケーキ専門店</p>
-						</div>
-						<div class="dummy-header"></div>
-						<div class="search-header">
-							<p>ようこそ<?php //print h($user_name); ?>プリントphp</a>さん。<a href="./index.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></p>
-							<div class="btn-group header-right" role="group">
-									<a href="./favor.php" class="btn btn-default" role="button"><span class="glyphicon glyphicon-star" aria-hidden="true"></span>お気に入り</a>
-									<a href="./cart.php" class="btn btn-default" role="button"><img class="icon-cart" src="img/icon/iconmonstr-shopping-cart_brown-28-240.png">カート</a>
-									<a href="./mypage.php" class="btn btn-default" role="button">マイページ</a>
-<?php //if(ログアウトしてたらまたはログインしていなかったら) { ?>
-									<a href="./login.php" class="btn btn-default" role="button">ログイン</a>
-<?php //} else if (ログインしたら) { ?>
-									<a href="./logout.php" class="btn btn-default" role="button">ログアウト</a>
-<?php //} ?>
-							</div>
-						</div>
-					</div><!-- header-top終わり -->
-					<div class="header-list">
-		        <ul>
-		          <li><a href="./index.php" class="logo-color">ホーム</a></li>
-		          <li><a href="./category.php" class="logo-color">カテゴリ検索</a></li>
-							<li><a href="./access.php" class="logo-color">アクセス</a></li>
-							<li><a href="./contact.php" class="logo-color">お問い合わせ</a></li>
-		        </ul>
-		      </div>
-					<!-- header-list終わり -->
-				</div>
-	   	</div>
-    </header>
-    <main id="body-bk">
-      <!-- <div id="body"> -->
-			<div class="box middle">
-				<nav>
-	        <section>
+session_start();
 
-	        </section>
-					<section>
+// 未ログインなら、ログイン画面へ
+if(login_check() === false){
+	header('Location: ./login.php');
+	exit;
+}
+$user_id = '';
+if (isset($_SESSION['user_id']) === TRUE) {
+  // ログイン済みの場合
+  $user_id = $_SESSION['user_id'];
+  //データベースに接続して、ログインユーザの情報を得る
+  $link = get_db_connect();
+  try {
+  	$user_data= get_login_user_data($link, $user_id);
+  } catch (PDOException $e) {
+  	$err_msg[] = $e-> getMessage();
+  }
+} else {
+  // $user_id = 'ゲスト';
+}
+// var_dump($user_data);
+// // Cookie情報からユーザ名を取得 (ログインの時のみ)
+// if (isset($_COOKIE['user_name'])) {
+//   $user_name = $_COOKIE['user_name'];
+// } else {
+//   $user_name = '';
+// }
+// ユーザ名の取得の確認
+$login_user = '';
+if (isset($user_data[0]['user_name'])) {
+  $login_user = $user_data[0]['user_name'];
+} else {
+  $login_user = 'ゲスト';
+}
+// var_dump($login_user);
+// エラーメッセージ
+$err_msg = [];
+$user_id = get_user_id();
+$msg = [];
+$img_dir = './image/';
 
-					</section>
-				</nav>
-				<article>
-					<p>現在、ショッピングカートには下記の商品が入っています</p>
-					<p>購入する場合は、購入ボタンを押してください。</p>
-				</article>
-				<aside>
+//商品一覧を取得
+try{
+  $dbh = get_db_connect();
+  // $cart_list = get_cart_list($dbh);
+}catch(PDOException $e){
+  $err_msg = $e->getMessage();
+}
+// $total_price = get_total_price($cart_list);
 
-	      </aside>
-			</div>
-    </main>
-    <footer id="footer-fixed">
-			<div id="footer-bk">
-				<div class="box">
-					<ul>
-						<li><a href="./site.php">サイトマップ</a></li>
-						<li><a href="./policy.php">プライバシーポリシー</a></li>
-						<li><a href="./contact.php">お問い合わせ</a></li>
-						<li><a href="./help.php">ご利用ガイド</a></li>
-					</ul>
-					<p><small>Copyright&copy;EatFruitCupcake All Rights Reserved.</small></p>
-				</div>
-			</div>
-		</footer>
-	</body>
-</html>
+$sql_kind = get_post_data('sql_kind');
+$request_method = get_request_method();
+$create_datetime = date('Y-m-d H:i:s');  //作成日時を取得
+$update_datetime = date('Y-m-d H:i:s');  //更新日時を取得
+
+// カートより商品を削除する処理
+if($sql_kind === 'delete_cart' && $request_method === 'POST'){
+	$params = array(
+	  'item_id' => get_post_data('item_id'),
+	  'user_id' => get_user_id()
+	);
+	try{
+	  $dbh = get_db_connect();
+	  $msg[] = delete_cart_item($dbh, $params);
+	}catch(PDOException $e){
+	  $err_msg[] = $e->getMessage();
+	}
+}
+
+// カートの中に入っている購入予定数を変更する処理
+if($sql_kind === 'update_cart' && $request_method === 'POST'){
+	$params = array(
+	  'item_id' => get_post_data('item_id'),
+	  'user_id' => get_user_id(),
+		'amount'  => get_post_data('amount'),
+	  'update_datetime' => date('Y-m-d H:i:s')
+	);
+	$params['amount'] = (int)$params['amount'];
+	try{
+	  $dbh = get_db_connect();
+	  // $msg[] = update_cart_amount($dbh, $params);
+		$msg[] = update_cart($dbh, $params);
+	}catch(PDOException $e){
+	  $err_msg[] = $e->getMessage();
+	}
+}
+
+$cart_list = get_cart_list($dbh);
+$total_price = get_total_price($cart_list);
+
+include_once './view/cart_view.php';
+
+ ?>
