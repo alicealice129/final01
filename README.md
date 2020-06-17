@@ -44,3 +44,8 @@ The flow of purchase is as below.<br>
 		- Purchase items / 商品を購入する
 	- The Page of Completed Purchase /「購入完了ページ」
 		- Show the information of items which the user would purchase / 購入した商品情報を表示する
+
+## サイトのイメージ
+<img src="https://github.com/alicealice129/final01/blob/master/screenshots/final01_index.png" width="320px">
+他の画像は以下より確認できます。<br>
+https://github.com/alicealice129/final01/blob/master/screenshots/
